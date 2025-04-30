@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Note</title>
+    <!-- <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        height: 100vh;
+        background: linear-gradient(to right, #4b5563, #2e2e2e);
+      }
+      .navbar {
+        width: 100%;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+      }
+
+      .navbar-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .navbar-menu {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-profile {
+        color: #fff;
+        margin-right: 20px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .navbar-logout {
+        padding: 8px 16px;
+        font-size: 1rem;
+        color: #fff;
+        background-color: #e74c3c;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .navbar-logout:hover {
+        background-color: #c0392b;
+      }
+      .app-container {
+        display: flex;
+        width: 100%;
+        margin-top: 50px;
+      }
+      .notes-list {
+        width: 280px;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 2rem 2rem;
+        overflow-y: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        margin: 20px;
+        border-radius: 20px;
+      }
+      .notes-list h2 {
+        margin-bottom: 1rem;
+        color: #222;
+      }
+      .note-item {
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+      }
+
+      .note-item.active {
+        background: #4b5563;
+        font-weight: bold;
+      }
+      .note-editor {
+        flex: 1;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(5px);
+        margin: 20px;
+        border-radius: 20px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .note-editor h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      .textarea {
+        width: 585px;
+        height: 480px;
+        margin-top: 20px;
+        border: solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        outline: none;
+        overflow: auto;
+        word-wrap: break-word;
+        white-space: normal;
+        overflow-wrap: break-word;
+      }
+      .textarea:empty::before {
+        content: attr(data-placeholder);
+        color: gray;
+        font-style: italic;
+      }
+    /* </style> */ -->
+    <style>
+      /* Reset and Box Model */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Body Style */
+      body {
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(to right, #4b5563, #2e2e2e);
+      }
+
+      /* Navbar Style */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 1000;
+      }
+
+      .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+      }
+
+      .navbar-logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .navbar-menu {
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar-profile {
+        color: #fff;
+        margin-right: 20px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .navbar-logout {
+        padding: 8px 16px;
+        font-size: 1rem;
+        color: #fff;
+        background-color: #e74c3c;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .navbar-logout:hover {
+        background-color: #c0392b;
+      }
+
+      /* Main Content Layout */
+      .app-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 60px;
+        height: 90vh; /* Space for fixed navbar */
+      }
+
+      /* Notes List */
+      .notes-list {
+        flex: 1;
+        max-width: 320px;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        overflow-y: auto;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+      }
+
+      .notes-list h2 {
+        margin-bottom: 1rem;
+        color: #222;
+      }
+
+      .note-item {
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        border-radius: 10px;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+      }
+
+      .note-item.active {
+        background: #4b5563;
+        font-weight: bold;
+      }
+
+      /* Note Editor */
+      .note-editor {
+        flex: 2;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .note-editor h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Textarea */
+      .textarea {
+        width: 90%; /* Adjusts based on container width */
+        height: 70vh; /* Adjusts based on viewport height */
+        margin-top: 20px;
+        border: solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        outline: none;
+      }
+
+      .textarea:empty::before {
+        content: attr(data-placeholder);
+        color: gray;
+        font-style: italic;
+      }
+      textarea {
+        all: unset;
+        border-bottom: 1px solid var(--secondary-text);
+        padding: 0.5rem 0;
+        width: 100%;
+        transition: border-color 0.2s ease;
+      }
+
+      textarea:focus {
+        border-bottom: 2px solid var(--accent);
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 768px) {
+        .app-container {
+          flex-direction: column; /* Stack elements vertically */
+        }
+
+        .notes-list {
+          width: 100%; /* Full width on small screens */
+          margin-bottom: 10px;
+          border-radius: 10px;
+        }
+
+        .note-editor {
+          width: 85%; /* Full width on small screens */
+          margin: 1rem;
+          border-radius: 10px;
+        }
+
+        .textarea {
+          width: 100%; /* Adjust textarea width for small screens */
+          height: 300px; /* Reduce textarea height */
+        }
+
+        .navbar-menu {
+          flex-direction: column; /* Stack navbar items vertically */
+          align-items: flex-end;
+        }
+
+        .navbar-profile {
+          margin-bottom: 10px; /* Space between profile and logout button */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-logo">NoteApp</div>
+        <div class="navbar-menu">
+          <span class="navbar-profile">👤 User Profile</span>
+          <button class="navbar-logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+    <div class="app-container">
+      <section class="notes-list">
+        <h2>Notes</h2>
+        <ul>
+          <li class="note-item active">Lorem ipsum dolor sit amet.</li>
+          <li class="note-item">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            Perspiciatis, dicta.
+          </li>
+        </ul>
+      </section>
+      <section class="note-editor">
+        <h1>What do you have in mind 💡</h1>
+        <form action="/note" method="post">
+            <div class="textarea">
+                <textarea name="title" id="title" rows="1" placeholder="Title"></textarea>
+                <textarea name="note" id="note" cols="10" rows="10" placeholder="Write......."></textarea>
+            </div>
+        </form>
+      </section>
+    </div>
+
+    <script>
+      // Highlight selected note
+      document.querySelectorAll(".note-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          document
+            .querySelectorAll(".note-item")
+            .forEach((el) => el.classList.remove("active"));
+          item.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>

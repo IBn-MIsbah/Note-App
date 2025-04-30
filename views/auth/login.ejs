@@ -1,0 +1,21 @@
+<%- include('../partials/header.ejs')%>
+  <body id="login-form-body">
+    <div class="container login-form">
+      <h2>Log in</h2>
+      <form action="/login" method="post" id="login">
+        <div class="email">
+          <label for="email">Email</label><br />
+          <input type="email" name="email" id="email" required /><br />
+        </div>
+        <div class="password">
+          <label for="password">Password</label><br />
+          <div class="pwd-wrapper">
+            <input type="password" name="password" id="pwd" /><br />
+            <span id="togglePassword" class="fa fa-eye eye-icon"></span>
+          </div>
+        </div>
+
+        <button class="btn login-btn" type="submit">Log in</button>
+      </form>
+    </div>
+<%- include('../partials/footer.ejs')%>

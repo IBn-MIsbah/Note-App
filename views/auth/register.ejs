@@ -1,0 +1,50 @@
+<%- include('../partials/header.ejs') %>
+</head>
+
+<body id="signup-form-body">
+  <div class="signup-form">
+    <h2>Sign up</h2>
+    <form action="/register" method="post">
+      <div class="personal-info">
+
+        <div class="first-name">
+          <label for="name">Name</label><br />
+          <input type="text" name="name" id="name" required />
+        </div>
+        <br>
+
+        <div class="email-input">
+          <label for="email">Email</label><br />
+          <input type="email" name="email" id="email" required />
+        </div>
+        <br>
+
+        <div class="pwd">
+          <label for="password">Password</label><br />
+          <div class="pwd-wrapper">
+            <input type="password" name="password" id="pwd" required />
+            <span id="togglePassword" class="fa fa-eye eye-icon"></span>
+          </div>
+        </div>
+        <br>
+
+        <button type="submit" class="btn signup-btn">Sign up</button>
+        <p>Already have an account? <a href="/login">Log in</a></p>
+      </div>
+    </form>
+  </div>
+
+  <!-- JavaScript for toggling password visibility -->
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('pwd');
+
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
+
+<%- include('../partials/footer.ejs') %>
