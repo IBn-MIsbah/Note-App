@@ -1,21 +1,43 @@
-import 'dotenv/config';
 import express from 'express';
-import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import bodyparser from 'body-parser';
 
-const app = express()
-const port = process.env.PORT || 3000
+const app = express();
 
-app.use(express.static('public'));
+mongoose.connect('mongodb://localhost:27017/notesApp');
+
+const noteSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+});
+
+const Note = mongoose.model('Note', noteSchema);
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.set(express.static('public'))
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
 
-app.get('/', (req,res)=>{
-    res.render('notes/create-note')
-})
-app.get('/login', (req, res)=>{
-    res.render('auth/login')
-})
-app.listen(port, (err)=>{
-    if(err) throw err;
-    console.log(`Server active on http://localhost:${port}`)
-})
+// Fetch all notes and render them
+app.get('/', async (req, res) => {
+  const notes = await Note.find();
+  res.render('notes/create-note.ejs', { notes, editingNote: null });
+});
+
+// Fetch specific note for editing
+app.get('/get-note/:id', async (req, res) => {
+  const note = await Note.findById(req.params.id);
+  res.json(note);
+});
+
+// Update a note
+app.post('/update-note/:id', async (req, res) => {
+  const { title, content } = req.body;
+  await Note.findByIdAndUpdate(req.params.id, { title, content });
+  res.redirect('/');
+});
+
+// Start the server
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
