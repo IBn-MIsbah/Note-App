@@ -1,0 +1,71 @@
+/* Global Variables */
+:root {
+  --bg-color: #f3f4f6; 
+  --primary-text: #1f2937; 
+  --secondary-text: #374151; 
+  --accent: #2563eb;
+  --border: #d1d5db; 
+  --white: #ffffff;
+  --sidebar-bg: #e5e7eb; 
+  --active-item: #cbd5e1; 
+  --success: #059669; 
+  --warning: #eab308; 
+  --error: #dc2626; 
+}
+
+
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e5e7eb 100%);
+  color: var(--primary-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Footer */
+footer {
+  background: var(--primary-text);
+  color: var(--white);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* Utility Classes */
+.btn {
+  all: unset;
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}

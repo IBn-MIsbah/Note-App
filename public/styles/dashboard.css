@@ -1,0 +1,144 @@
+:root {
+    --bg-color: #f5f7fa;
+    --primary-text: #2e2e2e;
+    --secondary-text: #4b5563;
+    --accent: #3b82f6;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --sidebar-bg: #e5e7eb;
+    --active-item: #d1d5db;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Layout container */
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* Sidebar */
+  .notes-sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    border-right: 1px solid var(--border);
+  }
+  
+  .sidebar-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary-text);
+    margin-bottom: 15px;
+  }
+  
+  .notes-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .note-item {
+    background-color: var(--white);
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .note-item-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .note-item-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .btn-edit, .btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .btn-edit {
+    color: var(--success);
+  }
+  
+  .btn-delete {
+    color: var(--error);
+  }
+  
+  /* Main content */
+  .notes-main {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--white);
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  
+  .note-viewer {
+    background-color: var(--white);
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    margin-top: 20px;
+  }
+  
+  .note-title {
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  .note-content {
+    margin-top: 15px;
+    font-size: 16px;
+    color: var(--secondary-text);
+  }
+  
+  .note-meta {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  /* Placeholder */
+  .note-placeholder {
+    text-align: center;
+    color: var(--secondary-text);
+    margin-top: 50px;
+  }
+  
+  .note-placeholder i {
+    font-size: 50px;
+    color: var(--accent);
+  }
+  
+  .note-placeholder h3 {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  

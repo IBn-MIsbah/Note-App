@@ -1,0 +1,120 @@
+/* Global styles */
+:root {
+    --bg-color: #f5f7fa;
+    --primary-text: #2e2e2e;
+    --secondary-text: #4b5563;
+    --accent: #3b82f6;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --button-bg: #3b82f6;
+    --button-hover: #2563eb;
+    --error: #ef4444;
+  }
+  
+  body.auth-container {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Form container */
+  .form-container {
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: var(--primary-text);
+  }
+  
+  /* Input fields */
+  .form-element {
+    text-align: left;
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--secondary-text);
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    font-size: 16px;
+  }
+  
+  input:focus {
+    border-color: var(--accent);
+    outline: none;
+  }
+  
+  /* Password field */
+  .pwd-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    color: var(--secondary-text);
+  }
+  
+  /* Buttons */
+  .btn {
+    display: inline-block;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .signup-btn,
+  .login-btn{
+    background-color: var(--button-bg);
+    color: var(--white);
+    width: 90%;
+  }
+  
+  .signup-btn:hover {
+    background-color: var(--button-hover);
+  }
+  
+  /* Login link */
+  p {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  p a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  
