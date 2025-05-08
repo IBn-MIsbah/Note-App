@@ -1,43 +1,44 @@
-import express from 'express';
+import 'dotenv/config'
+import express from 'express'
+import ejs from 'ejs'
+import passport from 'passport';
+import bodyParser from 'body-parser';
+import session from 'express-session';
 import mongoose from 'mongoose';
-import bodyparser from 'body-parser';
+import passportLocalMongoose from 'passport-local-mongoose';
+
+import noteRoutes from './routes/notes.js';
+import registerRoute from './routes/auth.js';
+
+import User from './models/user.js'
 
 const app = express();
+const port = process.env.PORT || 4000;
 
-mongoose.connect('mongodb://localhost:27017/notesApp');
+app.use(express.static('public'))
+app.use(bodyParser.urlencoded({extended: true}))
+app.set('view engine', 'ejs')
 
-const noteSchema = new mongoose.Schema({
-  title: String,
-  content: String,
-});
+app.use(session({
+  secret: process.env.SECRET || '1234567890poiuytrewq',
+  resave: false,
+  saveUninitialized: false,
 
-const Note = mongoose.model('Note', noteSchema);
+}))
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.set(express.static('public'))
-app.set('view engine', 'ejs');
+app.use(passport.initialize());
+app.use(passport.session())
 
-// Fetch all notes and render them
-app.get('/', async (req, res) => {
-  const notes = await Note.find();
-  res.render('notes/create-note.ejs', { notes, editingNote: null });
-});
+mongoose.connect("mongodb://localhost:27017/userDB");
 
-// Fetch specific note for editing
-app.get('/get-note/:id', async (req, res) => {
-  const note = await Note.findById(req.params.id);
-  res.json(note);
-});
+passport.use(User.createStrategy());
 
-// Update a note
-app.post('/update-note/:id', async (req, res) => {
-  const { title, content } = req.body;
-  await Note.findByIdAndUpdate(req.params.id, { title, content });
-  res.redirect('/');
-});
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+app.use('/', registerRoute) 
 
-// Start the server
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+
+app.listen(port, (err) => {
+  if(err) throw err
+  console.log(`✅ Server running at http://localhost:${port}`);
 });
