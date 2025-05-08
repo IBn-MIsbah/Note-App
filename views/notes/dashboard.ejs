@@ -1,0 +1,85 @@
+<%- include('../partials/header') %>
+<div class="app-container">
+  <aside class="notes-sidebar" style="width: 350px">
+    <h2 class="sidebar-title">Your Notes</h2>
+    <div class="notes-list">
+      <% if (locals.notes && notes.length > 0) { %> <% notes.forEach(note => {
+      %>
+      <div class="note-item" data-id="<%= note._id %>">
+        <h3 class="note-item-title"><%= note.title %></h3>
+        <div class="note-item-actions">
+          <a
+            href="/edit/<%= note._id %>"
+            class="btn-edit"
+            data-id="<%= note._id %>"
+          >
+            <i class="fas fa-edit"></i>
+          </a>
+          <button class="btn-delete" data-id="<%= note._id %>">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      <% }); %> <% } else { %>
+      <div class="empty-notes">
+        <i class="fas fa-book-open"></i>
+        <p>No notes yet. Create one!</p>
+      </div>
+      <% } %>
+    </div>
+  </aside>
+
+  <main class="notes-main">
+    <div class="dashboard-header">
+      <h1 style="font-size: 1.5rem; color: #fff;">Welcome, <%= user.username %>!</h1>
+      <button class="navbar-logout">
+        <a href="/logout" style="all: unset">Logout</a>
+      </button>
+    </div>
+
+    <% if (locals.selectedNote) { %>
+    <div class="note-viewer">
+      <h2 class="note-title"><%= selectedNote.title || "title" %></h2>
+      <div class="note-content"><%= selectedNote.content || "content" %></div>
+      <div class="note-meta">
+        <span>Created: <%= selectedNote.createdAt.toDateString() %></span>
+        <a href="/notes/edit/<%= selectedNote._id %>" class="btn btn-edit">
+          Edit Note
+        </a>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="note-placeholder">
+      <i class="fas fa-sticky-note"></i>
+      <h3 style="color: #fff;">Select a note or create a new one</h3>
+      <a
+        href="/notes/create"
+        class="btn btn-primary"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 20px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #ffffff;
+          background-color: #007bff;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.3s ease-in-out;
+          box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        "
+        onmouseover="this.style.backgroundColor='#0056b3'; this.style.transform='scale(1.05)'; 
+               this.style.boxShadow='0 6px 12px rgba(0, 123, 255, 0.3)';"
+        onmouseout="this.style.backgroundColor='#007bff'; this.style.transform='scale(1)'; 
+              this.style.boxShadow='0 4px 8px rgba(0, 123, 255, 0.2)';"
+      >
+        <i class="fas fa-plus" style="font-size: 18px"></i> New Note
+      </a>
+    </div>
+    <% } %>
+  </main>
+</div>
+<%- include('../partials/footer') %>

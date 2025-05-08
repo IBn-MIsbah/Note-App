@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create New Note | NoteApp</title>
+
+    <!-- ✅ CSS Styles -->
+    <style>
+      /* Global Reset */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background: linear-gradient(to right, var(--secondary-text), var(--primary-text));
+      }
+
+      /* ✅ Navbar Styling */
+      .navbar {
+        position: fixed; top: 0; left: 0; width: 100%; height: 65px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 25px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 1000;
+      }
+
+      .navbar-logo { font-size: 1.8rem; font-weight: bold; color: var(--white); }
+      .navbar-menu { display: flex; align-items: center; gap: 1rem; }
+      .navbar-profile { color: var(--white); cursor: pointer; font-size: 1rem; }
+
+      /* ✅ Buttons */
+      .navbar-logout {
+        padding: 8px 18px; font-size: 1rem;
+        color: var(--white); background-color: var(--error);
+        border: none; border-radius: 6px; cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .navbar-logout:hover { background-color: #b91c1c; }
+
+      /* ✅ Note Creation Form */
+      .create-note-container { margin-top: 90px; padding: 2.5rem; display: flex; justify-content: center; }
+      .create-note-form {
+        width: 100%; max-width: 750px; background: var(--white);
+        padding: 2rem; border-radius: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .form-group { margin-bottom: 1.5rem; }
+      .form-group label { display: block; margin-bottom: 0.5rem; color: var(--secondary-text); font-weight: 500; }
+
+      .form-control {
+        width: 100%; padding: 0.9rem; border: 1px solid var(--border); border-radius: 6px;
+        font-family: inherit; font-size: 1rem; transition: border-color 0.3s ease; background-color: var(--white);
+      }
+
+      .form-control:focus { outline: none; border-color: var(--accent); }
+
+      /* ✅ Fix for Title Input */
+      #title { font-family: "Times New Roman", serif; font-weight: 700; font-size: xx-large; }
+
+      /* ✅ Button Section */
+      .btn-container { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; }
+
+      .btn { padding: 0.9rem 1.8rem; border-radius: 30px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
+      .btn-cancel,
+      .btn-update{
+        border: none;
+        background-color: lightblue;
+        color: #333;
+      }
+      .btn-save { background: var(--accent); color: var(--white); border: none; }
+      .btn-save:hover { background: #059669; }
+      .btn-cancel { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+      .btn-cancel:hover { background: rgba(59, 130, 246, 0.1); }
+    </style>
+</head>
+<body>
+  <!-- ✅ Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">NoteApp</div>
+      <div class="navbar-menu">
+        <% if (locals.user) { %>
+          <span class="navbar-profile">👤 <%= user.username %></span>
+          <% } %>
+        <button class="navbar-logout"><a href="/logout" style="all: unset">Logout</a></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✅ Note Creation Form -->
+  <div class="create-note-container">
+    <form class="create-note-form" action="<%= locals.note ? `/notes/edit/${note._id}` : '/notes/create' %>" method="POST">
+
+      <% if (locals.message) { %>
+       
+        <% if (messages.err) { %>
+          <div class="alert alert-error"><%= messages.err %></div>
+        <% } %>
+        <% if (messages.success) { %>
+            <div class="alert alert-success"><%= messages.success %></div>
+        <% } %>
+      <% } %>
+      <% if (locals.note) { %>
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" class="form-control" 
+          required minlength="3" maxlength="100" value="<%= note.title%>">
+        </div>
+        <div class="form-group">
+          <label for="content">Content</label>
+          <textarea id="content" name="content" class="form-control" minlength="10"><%= note.content%></textarea>
+        </div>
+      <% } else{ %>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" class="form-control" 
+        required minlength="3" maxlength="100" >
+      </div>
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea id="content" name="content" class="form-control" minlength="10"></textarea>
+      </div>
+     <%}%>
+      <div class="btn-container">
+        <a href="/dashboard" class="btn btn-cancel">Cancel</a>
+        <%if (locals.note) {%>
+          <button type="submit" class="btn btn-update" formaction="/notes/update/<%= note._id %>">Update</button>
+
+        <%}else{%>
+          <button type="submit" class="btn btn-save">Save Note</button>
+        <%}%>
+      </div>
+    </form>
+  </div>
+</body>
+</html
