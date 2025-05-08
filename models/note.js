@@ -1,14 +1,27 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-const noteShema = new mongoose.Schema({
-  title:{ type: String, required: true },
-  content: { type: String, required: true },
-  userID: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  createdAt: { type: Date, default: Date.now, immutable: true },
-  updatedAt: { type: Date, default: Date.now },
+const noteSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 });
-noteShema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next()
-});
-export default mongoose.model("Note", noteShema);
+
+module.exports = mongoose.model('Note', noteSchema);
