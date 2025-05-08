@@ -1,21 +1,26 @@
 <%- include('../partials/header.ejs')%>
-  <body id="login-form-body">
-    <div class="container login-form">
+  <body id="login-form-body" class="auth-container">
+    <div class="form-container">
       <h2>Log in</h2>
       <form action="/login" method="post" id="login">
-        <div class="email">
+        <div class="email form-element">
           <label for="email">Email</label><br />
           <input type="email" name="email" id="email" required /><br />
         </div>
-        <div class="password">
+        <div class="password form-element">
           <label for="password">Password</label><br />
-          <div class="pwd-wrapper">
-            <input type="password" name="password" id="pwd" /><br />
+          <div class="pwd-wrapper form-element">
+            <input type="password" name="password" id="pwd" />
             <span id="togglePassword" class="fa fa-eye eye-icon"></span>
           </div>
         </div>
 
-        <button class="btn login-btn" type="submit">Log in</button>
+        <button class="btn login-btn btn-primary" type="submit" style="width: 80%;">Log in</button>
+        <a href="/auth/google" role="button" class="btn btn-block btn-dark">
+          <i class="fab fa-google">
+            Sign Up with Google
+          </i>
+        <p>Don't have an account? <a href="/register">Register</a></p>
       </form>
     </div>
 <%- include('../partials/footer.ejs')%>
