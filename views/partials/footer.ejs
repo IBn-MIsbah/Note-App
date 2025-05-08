@@ -1,0 +1,156 @@
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Password visibility toggle
+      document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+          const input = this.previousElementSibling;
+          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+          input.setAttribute('type', type);
+          this.classList.toggle('fa-eye');
+          this.classList.toggle('fa-eye-slash');
+          // Focus the input after toggle for better UX
+          input.focus();
+        });
+      });
+  
+      // Delete note functionality
+      document.addEventListener('click', async (e) => {
+        if (e.target.closest('.btn-delete')) {
+          e.preventDefault();
+          const button = e.target.closest('.btn-delete');
+          const noteId = button.dataset.id;
+          const noteItem = button.closest('.note-item');
+  
+          if (!confirm('Permanently delete this note?')) return;
+  
+          // Show loading state
+          button.disabled = true;
+          const originalContent = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+  
+          try {
+            const response = await fetch(`/notes/${noteId}`, { 
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+  
+            const data = await response.json();
+            
+            if (!response.ok) {
+              throw new Error(data.error || 'Failed to delete note');
+            }
+  
+            // Visual removal with animation
+            noteItem.style.transition = 'all 0.3s ease';
+            noteItem.style.opacity = '0';
+            noteItem.style.height = '0';
+            noteItem.style.margin = '0';
+            noteItem.style.padding = '0';
+            
+            // Wait for animation to complete before removing
+            setTimeout(() => {
+              noteItem.remove();
+              
+              // Show success message if any notes remain
+              if (!document.querySelector('.note-item')) {
+                showToast('Note deleted successfully!', 'success');
+                document.querySelector('.empty-notes').style.display = 'block';
+              }
+            }, 300);
+            
+          } catch (err) {
+            console.error('Delete error:', err);
+            showToast(err.message || 'Failed to delete note', 'error');
+            button.disabled = false;
+            button.innerHTML = originalContent;
+          }
+        }
+      });
+  
+      // Edit note functionality
+      document.addEventListener('click', async (e) => {
+        if (e.target.closest('.btn-edit')) {
+          e.preventDefault();
+          const button = e.target.closest('.btn-edit');
+          const noteId = button.dataset.id;
+          
+          // Show loading state
+          button.disabled = true;
+          const originalContent = button.innerHTML;
+          button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+          try {
+            // Redirect to edit page
+            window.location.href = `/notes/edit/${noteId}`;
+          } catch (err) {
+            console.error('Edit error:', err);
+            showToast('Failed to load edit page', 'error');
+            button.disabled = false;
+            button.innerHTML = originalContent;
+          }
+        }
+      });
+  
+      // Toast notification function
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.classList.add('show');
+          setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+          }, 3000);
+        }, 100);
+      }
+    });
+  </script>
+  
+  <style>
+    /* Toast notification styles */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 24px;
+      border-radius: 4px;
+      color: white;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .toast-success {
+      background-color: #10b981;
+    }
+    
+    .toast-error {
+      background-color: #ef4444;
+    }
+    
+    .toast-info {
+      background-color: #3b82f6;
+    }
+    
+    /* Loading spinner animation */
+    .fa-spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  </body>
+  </html>
