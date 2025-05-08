@@ -4,10 +4,9 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const bodyparser = require("body-parser");
-const User = require("./models/user.js");
 const flash = require("connect-flash");
 const GoogleStrategy = require("passport-google-oauth20");
-
+const User = require("./models/user.js");
 
 const authRoutes = require("./routes/auth");
 const noteRoutes = require("./routes/notes.js");
@@ -55,20 +54,27 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
       callbackURL: "http://localhost:4000/auth/google/note-app",
-      scope: ['profile', 'email'],
+      scope: ["profile", "email"],
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    function (accessToken, refreshToken, profile, cb) {
-      const email = profile.email?.[0].value || `${profile.id}@nomail.com`
-      User.findOrCreate(
-        { googleId: profile.id },
-        {username: profile.displayName || "Google User",
-          email: email,
-        },
-        
-         function (err, user) {
-        return cb(err, user);
-      });
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const email =
+          profile.emails?.[0]?.value || `${profile.id}@google.noemail`;
+        const username =
+          profile.displayName?.replace(/\s+/g, "_") ||
+          email.split("@")[0] ||
+          `user_${profile.id.slice(0, 6)}`;
+
+        const user = await User.findOrCreate(
+          { googleId: profile.id },
+          { username, email: email.toLowerCase(), googleId: profile.id }
+        );
+
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
     }
   )
 );
@@ -77,8 +83,8 @@ app.use("/", authRoutes);
 app.use("/notes", noteRoutes);
 
 app.get("/", (req, res) => {
-  const date = new Date;
-  res.render("index.ejs", { date: date.getFullYear()});
+  const date = new Date();
+  res.render("index.ejs", { date: date.getFullYear() });
 });
 
 app.listen(port, (err) => {
