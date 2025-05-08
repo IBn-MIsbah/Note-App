@@ -1,11 +1,28 @@
-import mongoose from "mongoose";
-import passportLocalMongoose from 'passport-local-mongoose';
+const mongoose = require('mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
+const findOrCreate = require("mongoose-findorcreate")
+
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, lowercase: true, unique: true },
-  password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now, immutable: true },
+    username:{
+        type: String,
+        required: true
+    },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  googleId: String,
+  notes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Note'
+  }]
 });
-userSchema.plugin(passportLocalMongoose)
-export default mongoose.model("User", userSchema);
+
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: 'email'
+});
+userSchema.plugin(findOrCreate)
+
+module.exports = mongoose.model('User', userSchema);
