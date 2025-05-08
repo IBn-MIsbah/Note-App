@@ -4,7 +4,7 @@ const passport = require("passport");
 const session = require("express-session");
 const passportLocalMongoose = require("passport-local-mongoose");
 const User = require("../models/user.js");
-const Note = require("../models/note.js")
+const Note = require("../models/note.js");
 const { isLoggedIn } = require("../middleware/authMiddleware.js");
 
 const router = express.Router();
@@ -19,15 +19,19 @@ router.get("/register", (req, res) => {
     title: "SignUp",
   });
 });
-router.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile'] })
+router.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile"] })
 );
 
-router.get('/auth/google/note-app', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/dashboard');
-  });
+router.get(
+  "/auth/google/note-app",
+  passport.authenticate("google", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -49,7 +53,6 @@ router.post("/register", async (req, res) => {
           notes: populatedUser.notes,
         });
       });
-      
     });
   } catch (err) {
     console.error(err);

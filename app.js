@@ -1,44 +1,87 @@
-import 'dotenv/config'
-import express from 'express'
-import ejs from 'ejs'
-import passport from 'passport';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import mongoose from 'mongoose';
-import passportLocalMongoose from 'passport-local-mongoose';
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const passport = require("passport");
+const session = require("express-session");
+const bodyparser = require("body-parser");
+const User = require("./models/user.js");
+const flash = require("connect-flash");
+const GoogleStrategy = require("passport-google-oauth20");
 
-import noteRoutes from './routes/notes.js';
-import registerRoute from './routes/auth.js';
 
-import User from './models/user.js'
-
+const authRoutes = require("./routes/auth");
+const noteRoutes = require("./routes/notes.js");
 const app = express();
-const port = process.env.PORT || 4000;
+const port = 4000;
 
-app.use(express.static('public'))
-app.use(bodyParser.urlencoded({extended: true}))
-app.set('view engine', 'ejs')
+mongoose
+  .connect("mongodb://localhost:27017/noteApp")
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.log(`Error: ${err}`));
 
-app.use(session({
-  secret: process.env.SECRET || '1234567890poiuytrewq',
-  resave: false,
-  saveUninitialized: false,
+app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static("public"));
+app.set("view engine", "ejs");
 
-}))
-
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(flash());
 app.use(passport.initialize());
-app.use(passport.session())
-
-mongoose.connect("mongodb://localhost:27017/userDB");
+app.use(passport.session());
 
 passport.use(User.createStrategy());
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-app.use('/', registerRoute) 
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
 
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "http://localhost:4000/auth/google/note-app",
+      scope: ['profile', 'email'],
+      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      const email = profile.email?.[0].value || `${profile.id}@nomail.com`
+      User.findOrCreate(
+        { googleId: profile.id },
+        {username: profile.displayName || "Google User",
+          email: email,
+        },
+        
+         function (err, user) {
+        return cb(err, user);
+      });
+    }
+  )
+);
+
+app.use("/", authRoutes);
+app.use("/notes", noteRoutes);
+
+app.get("/", (req, res) => {
+  const date = new Date;
+  res.render("index.ejs", { date: date.getFullYear()});
+});
 
 app.listen(port, (err) => {
-  if(err) throw err
-  console.log(`✅ Server running at http://localhost:${port}`);
+  if (err) throw err;
+  console.log(`Server active on http://localhost:${port}`);
 });
