@@ -3,9 +3,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const bodyparser = require("body-parser");
 const flash = require("connect-flash");
 const GoogleStrategy = require("passport-google-oauth20");
+const MongoStore = require("connect-mongo")
 const User = require("./models/user.js");
 
 const authRoutes = require("./routes/auth");
@@ -18,7 +18,7 @@ mongoose
   .then(() => console.log("DB connected"))
   .catch((err) => console.log(`Error: ${err}`));
 
-app.use(bodyparser.urlencoded({ extended: true }));
+  app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -28,13 +28,19 @@ app.use(
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: "mongodb://localhost:27017/noteApp" }), 
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "lax",
+    },
   })
 );
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(User.createStrategy());
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -53,25 +59,22 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "http://localhost:4000/auth/google/note-app",
+      callbackURL: process.env.NODE_ENV === "production"
+      ? "https://note-app-aesj.onrender.com/auth/google"
+      : "http://localhost:4000/auth/google/note-app",
       scope: ["profile", "email"],
-      userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        const email =
-          profile.emails?.[0]?.value || `${profile.id}@google.noemail`;
-        const username =
-          profile.displayName?.replace(/\s+/g, "_") ||
-          email.split("@")[0] ||
-          `user_${profile.id.slice(0, 6)}`;
-
+        const email = profile.emails?.[0]?.value || `${profile.id}@google.noemail`;
+        const username = profile.displayName?.replace(/\s+/g, "_") || email.split("@")[0] || `user_${profile.id.slice(0, 6)}`;
         const user = await User.findOrCreate(
           { googleId: profile.id },
-          { username, email: email.toLowerCase(), googleId: profile.id }
+          { username, email: email.toLowerCase(), googleId: profile.id },
+          { upsert: true, new: true}
         );
 
-        return done(null, user);
+        return done(null, user.doc);
       } catch (err) {
         return done(err);
       }
