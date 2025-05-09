@@ -13,8 +13,10 @@ const noteRoutes = require("./routes/notes.js");
 const app = express();
 const port = 4000;
 
+const DBlink = process.env.NODE_ENV === 'production' ? `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.435oznd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0` : 'mongodb://localhost:27017/noteApp'
+
 mongoose
-  .connect("mongodb://localhost:27017/noteApp")
+  .connect(DBlink)
   .then(() => console.log("DB connected"))
   .catch((err) => console.log(`Error: ${err}`));
 
