@@ -31,7 +31,7 @@ module.exports = function (passport) {
         clientSecret: process.env.CLIENT_SECRET,
         callbackURL:
           process.env.NODE_ENV === "production"
-            ? "https://note-app-aesj.onrender.com/auth/google"
+            ? "https://note-app-aesj.onrender.com/auth/google/note-app"
             : "http://localhost:4000/auth/google/note-app",
         scope: ["profile", "email"],
         userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
